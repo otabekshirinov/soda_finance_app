@@ -1,20 +1,39 @@
 {% extends 'base.html' %}
 {% block title %}{{ month_name }} {{ year }}{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-extrabold text-gray-900 mb-6">{{ month_name }} {{ year }}</h1>
-  <div class="grid grid-cols-7 gap-4 mb-6">
-    <a href="{{ url_for('month_summary', year=year, month=request.view_args['month']) }}"
-       class="col-span-7 bg-gradient-to-r from-yellow-100 to-yellow-200 hover:from-yellow-200 hover:to-yellow-100 rounded-2xl shadow-lg p-6 transform hover:-translate-y-1 transition-transform duration-300 text-center">
-      <div class="text-xl font-semibold text-gray-800">Сводный отчёт</div>
-      <div class="text-gray-600 mt-1">расходы · выручка · прибыль</div>
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <!-- Шапка: назад и сводка -->
+  <div class="flex items-center justify-between mb-8">
+    <!-- Ссылка назад к месяцам -->
+    <a href="{{ url_for('index') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition">
+      ← К месяцам
+    </a>
+    <h1 class="text-4xl font-extrabold text-gray-800">{{ month_name }} {{ year }}</h1>
+    <!-- Кнопка сводного отчёта -->
+    <a href="{{ url_for('month_summary', year=year, month=month) }}"
+       class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+      Сводный отчёт
     </a>
   </div>
-  <div class="grid grid-cols-7 gap-6">
+
+  <!-- Заголовок дней недели -->
+  <div class="grid grid-cols-7 gap-4 mb-2 text-center font-medium text-gray-500 uppercase">
+    {% for wd in ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'] %}
+      <div>{{ wd }}</div>
+    {% endfor %}
+  </div>
+
+  <!-- Сетка дней месяца -->
+  <div class="grid grid-cols-7 gap-4">
+    {% set first_weekday = date(year, month, 1).weekday() %}
+    {% for _ in range((first_weekday + 6) % 7) %}
+      <div></div>
+    {% endfor %}
     {% for d in days %}
-      <a href="{{ d.url }}" class="flex flex-col items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-indigo-50 hover:to-blue-50 rounded-2xl shadow p-4 transform hover:-translate-y-1 transition-transform duration-300">
-        <div class="text-lg font-semibold text-gray-800">{{ d.day }}</div>
-        <div class="text-sm text-gray-500 mt-1">{{ d.weekday }}</div>
+      <a href="{{ d.url }}" class="group block p-4 bg-white rounded-xl shadow hover:shadow-md transition transform hover:-translate-y-1 relative">
+        <div class="absolute top-2 right-2 text-xs text-gray-400 group-hover:text-green-600 transition-opacity">{{ date(year, month, d.day).strftime('%d.%m') }}</div>
+        <div class="relative z-10 text-2xl font-bold text-gray-700">{{ d.day }}</div>
+        <div class="relative z-10 mt-1 text-sm text-gray-500">{{ date(year, month, d.day).strftime('%a') }}</div>
       </a>
     {% endfor %}
   </div>

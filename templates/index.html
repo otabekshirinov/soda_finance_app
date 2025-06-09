@@ -1,47 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}Месяцы{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-extrabold text-gray-900 mb-6">Выберите месяц</h1>
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <h1 class="text-4xl font-extrabold text-gray-900 mb-8">
+    Выберите месяц
+  </h1>
 
-  {% set ru_months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'] %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-
-    {# --- Карточка «Сводка за год» --- #}
+    <!-- Сводка за год -->
     <a href="{{ url_for('year_summary', year=current_year) }}"
-       class="flex items-center p-6 bg-gradient-to-r from-amber-100 to-yellow-100 hover:from-yellow-100 hover:to-amber-100 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-transform duration-300 col-span-1 md:col-span-2">
-      <div class="flex-shrink-0">
-        <!-- Chart/analytics icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-yellow-600" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
+       class="group flex flex-col items-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+      <div class="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full mb-4 transform group-hover:rotate-6 transition-all">
+        <!-- Chart Bar Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 12h2m-1-1v8m-6-4h2m-1-1v5m12-8h2m-1-1v9M4 6h16M4 10h16M4 14h16" />
+                d="M3 3v18h18M9 17V9m6 8V5" />
         </svg>
       </div>
-      <div class="ml-4">
-        <div class="text-xl font-semibold text-gray-800">Сводный отчёт</div>
-        <div class="text-sm text-gray-500">{{ current_year }}</div>
-      </div>
+      <div class="text-xl font-semibold text-gray-800 mb-1">Сводный отчёт</div>
+      <div class="text-sm text-gray-500">{{ current_year }}</div>
     </a>
 
-    {# --- 12 месяцев --- #}
+    <!-- Месяцы -->
     {% for m in months %}
-      <a href="{{ url_for('month_view', year=current_year, month=m.number) }}"
-         class="flex items-center p-6 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-indigo-50 hover:to-blue-50 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-transform duration-300">
-        <div class="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-500" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10m-7 4h.01M12 20h.01M16 16h.01M8 16h.01" />
-          </svg>
-        </div>
-        <div class="ml-4">
-          <div class="text-xl font-semibold text-gray-800">{{ ru_months[m.number-1] }}</div>
-          <div class="text-sm text-gray-500">{{ m.number }} / {{ current_year }}</div>
-        </div>
-      </a>
+    <a href="{{ url_for('month_view', year=current_year, month=m.number) }}"
+       class="group flex flex-col items-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+      <div class="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full mb-4 transform group-hover:-rotate-6 transition-all">
+        <!-- Calendar Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <div class="text-2xl font-semibold text-gray-800 mb-1">{{ ru_months[m.number-1] }}</div>
+      <div class="text-sm text-gray-500">{{ m.number }} / {{ current_year }}</div>
+    </a>
     {% endfor %}
+
   </div>
 </div>
 {% endblock %}

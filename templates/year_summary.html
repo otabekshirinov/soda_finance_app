@@ -1,68 +1,82 @@
 {% extends 'base.html' %}
 {% block title %}Сводный отчёт {{ year }}{% endblock %}
-
 {% block content %}
-<a href="{{ url_for('index') }}" class="text-blue-600 hover:underline">&larr; к месяцам</a>
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+  <!-- Назад к месяцам -->
+  <a href="{{ url_for('index') }}" class="inline-flex items-center text-blue-500 hover:text-blue-600 transition mb-6">
+    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+         xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+    </svg>
+    <span class="font-medium">Вернуться к месяцам</span>
+  </a>
 
-<h1 class="text-3xl font-bold mb-8">Сводный отчёт за {{ year }}</h1>
+  <!-- Заголовок -->
+  <h1 class="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500 animate-pulse mb-12">
+    Сводный отчёт за {{ year }}
+  </h1>
 
-<!--–– Карточки итогов года ––-->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+  <!-- Карточки итогов года -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <!-- Расходы -->
+    <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition p-8 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-transparent to-teal-50 opacity-0 group-hover:opacity-60 transition"></div>
+      <h2 class="relative z-10 text-xl font-semibold mb-4 text-gray-800 group-hover:text-teal-600 transition">Расходы</h2>
+      <ul class="relative z-10 space-y-1 text-gray-700 mb-4">
+        <li>Сахар: {{ '%.2f'|format(data.sugar) }}</li>
+        <li>Эссенция: {{ '%.2f'|format(data.essence) }}</li>
+        <li>Налог: {{ '%.2f'|format(data.tax) }}</li>
+        <li>Вода: {{ '%.2f'|format(data.water) }}</li>
+        <li>Электричество: {{ '%.2f'|format(data.electricity) }}</li>
+        <li>Газ баллоны: {{ '%.2f'|format(data.gas) }}</li>
+        <li>Прочие: {{ '%.2f'|format(data.other) }}</li>
+      </ul>
+      <hr class="relative z-10 border-gray-200 mb-4">
+      <div class="relative z-10 font-bold text-lg text-gray-900">Итого: {{ '%.2f'|format(data.expenses) }}</div>
+    </div>
 
-  <div class="bg-white rounded-2xl shadow p-8">
-    <h2 class="text-xl font-semibold mb-4">Расходы</h2>
-    <ul class="space-y-1">
-      <li>Сахар: {{ '%.2f'|format(data.sugar) }}</li>
-      <li>Эссенция: {{ '%.2f'|format(data.essence) }}</li>
-      <li>Налог: {{ '%.2f'|format(data.tax) }}</li>
-      <li>Вода: {{ '%.2f'|format(data.water) }}</li>
-      <li>Электричество: {{ '%.2f'|format(data.electricity) }}</li>
-      <li>Газ баллоны: {{ '%.2f'|format(data.gas) }}</li>
-      <li>Прочие: {{ '%.2f'|format(data.other) }}</li>
-    </ul>
-    <hr class="my-3">
-    <div class="font-semibold">Итого: {{ '%.2f'|format(data.expenses) }}</div>
-  </div>
+    <!-- Доход -->
+    <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition p-8 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-transparent to-blue-50 opacity-0 group-hover:opacity-60 transition"></div>
+      <h2 class="relative z-10 text-xl font-semibold mb-4 text-gray-800 group-hover:text-blue-600 transition">Доход</h2>
+      <div class="relative z-10 text-4xl font-extrabold text-gray-900">{{ '%.2f'|format(data.revenue) }}</div>
+    </div>
 
-  <div class="bg-white rounded-2xl shadow p-8">
-    <h2 class="text-xl font-semibold mb-4">Доход</h2>
-    <div class="text-3xl font-bold">{{ '%.2f'|format(data.revenue) }}</div>
-  </div>
-
-  <div class="bg-white rounded-2xl shadow p-8">
-    <h2 class="text-xl font-semibold mb-4">Прибыль</h2>
-    <div class="text-3xl font-bold {{ '-text-red-600' if data.profit < 0 else 'text-green-600' }}">
-      {{ '%.2f'|format(data.profit) }}
+    <!-- Прибыль -->
+    <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition p-8 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-transparent to-green-50 opacity-0 group-hover:opacity-60 transition"></div>
+      <h2 class="relative z-10 text-xl font-semibold mb-4 text-gray-800 group-hover:text-green-600 transition">Прибыль</h2>
+      <div class="relative z-10 text-4xl font-extrabold {{ 'text-red-600' if data.profit < 0 else 'text-green-600' }}">
+        {{ '%.2f'|format(data.profit) }}
+      </div>
     </div>
   </div>
 
-</div>
-
-<!--–– Таблица помесячной детализации ––-->
-<h2 class="text-2xl font-bold mb-4">Помесячная детализация</h2>
-
-<div class="overflow-x-auto">
-  <table class="min-w-full text-sm">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="px-4 py-2 text-left">Месяц</th>
-        <th class="px-4 py-2 text-right">Расходы</th>
-        <th class="px-4 py-2 text-right">Доход</th>
-        <th class="px-4 py-2 text-right">Прибыль</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in month_rows %}
-      <tr class="border-t hover:bg-gray-50">
-        <td class="px-4 py-2">{{ row.name }}</td>
-        <td class="px-4 py-2 text-right">{{ '%.2f'|format(row.expenses) }}</td>
-        <td class="px-4 py-2 text-right">{{ '%.2f'|format(row.revenue) }}</td>
-        <td class="px-4 py-2 text-right {{ '-text-red-600' if row.profit < 0 else 'text-green-600' }}">
-          {{ '%.2f'|format(row.profit) }}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Помесячная детализация -->
+  <h2 class="text-3xl font-bold mb-6 text-gray-800">Помесячная детализация</h2>
+  <div class="overflow-x-auto bg-white rounded-2xl shadow-lg">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Месяц</th>
+          <th class="px-6 py-3 text-right text-sm font-medium text-gray-700">Расходы</th>
+          <th class="px-6 py-3 text-right text-sm font-medium text-gray-700">Доход</th>
+          <th class="px-6 py-3 text-right text-sm font-medium text-gray-700">Прибыль</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for row in month_rows %}
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 whitespace-nowrap text-gray-800">{{ row.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-gray-700">{{ '%.2f'|format(row.expenses) }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-gray-700">{{ '%.2f'|format(row.revenue) }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right font-semibold {{ 'text-red-600' if row.profit < 0 else 'text-green-600' }}">
+            {{ '%.2f'|format(row.profit) }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}
