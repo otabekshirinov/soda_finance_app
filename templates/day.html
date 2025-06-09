@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}{{ date.strftime('%d.%m.%Y') }}{% endblock %}
+{% block content %}
+<a href="{{ url_for('month_view', year=year, month=month) }}" class="text-blue-600 hover:underline">&larr; к месяцам</a>
+
+<h1 class="text-2xl font-bold mb-6">{{ date.strftime('%d %B %Y') }}</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+  {% for field, label, value in cards %}
+    {% set val = value or 0 %}
+    <div x-data="{ open:false }" class="bg-white rounded shadow p-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <div class="text-lg font-semibold">{{ label }}</div>
+                <div class="text-gray-600 mt-1">{{ '{:.2f}'.format(val) }}</div>
+            </div>
+            <button @click="open=true" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Изменить</button>
+        </div>
+        <!-- Modal -->
+        <div x-show="open" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div @click.away="open=false" class="bg-white rounded shadow p-8 w-80">
+            <h2 class="text-xl font-semibold mb-4">Изменить «{{ label }}»</h2>
+            <form method="post">
+              <input type="hidden" name="field" value="{{ field }}">
+              <input type="number" step="0.01" name="value" value="{{ val }}"
+                     class="w-full border p-2 rounded mb-4">
+              <div class="flex justify-end space-x-2">
+                <button type="button" @click="open=false"
+                        class="px-4 py-2 bg-gray-200 rounded">Отмена</button>
+                <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Сохранить</button>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="mt-10 bg-white rounded shadow p-6">
+    <div class="text-xl font-semibold mb-2">Сводка</div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>Сумма расходов:</div><div class="text-right">{{ '{:.2f}'.format(record.expenses_total()) }}</div>
+        <div>Выручка:</div><div class="text-right">{{ '{:.2f}'.format(record.revenue or 0) }}</div>
+        <div class="font-semibold">Прибыль:</div><div class="text-right font-semibold">{{ '{:.2f}'.format(record.profit()) }}</div>
+    </div>
+</div>
+{% endblock %}

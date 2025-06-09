@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Сводка: {{ month_name }} {{ year }}{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('month_view', year=year, month=request.view_args['month']) }}"
+   class="text-blue-600 hover:underline">&larr; к дням</a>
+
+<h1 class="text-2xl font-bold mb-6">
+    Сводный отчёт за {{ month_name }} {{ year }}
+</h1>
+
+<!-- Карточки итогов месяца -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+  <div class="bg-white p-6 rounded shadow">
+    <div class="text-lg font-semibold mb-2">Расходы</div>
+    <ul class="space-y-1">
+      <li>Сахар: {{ '%.2f'|format(data.sugar) }}</li>
+      <li>Эссенция: {{ '%.2f'|format(data.essence) }}</li>
+      <li>Налог: {{ '%.2f'|format(data.tax) }}</li>
+      <li>Вода: {{ '%.2f'|format(data.water) }}</li>
+      <li>Электричество: {{ '%.2f'|format(data.electricity) }}</li>
+      <li>Газ баллоны: {{ '%.2f'|format(data.gas) }}</li>
+      <li>Прочие: {{ '%.2f'|format(data.other) }}</li>
+    </ul>
+    <hr class="my-2">
+    <div class="font-semibold">
+      Итого расходов: {{ '%.2f'|format(data.expenses) }}
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded shadow">
+    <div class="text-lg font-semibold mb-2">Доход</div>
+    <div class="text-3xl font-bold">
+      {{ '%.2f'|format(data.revenue) }}
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded shadow">
+    <div class="text-lg font-semibold mb-2">Прибыль</div>
+    <div class="text-3xl font-bold {{ '-text-red-600' if data.profit < 0 else 'text-green-600' }}">
+      {{ '%.2f'|format(data.profit) }}
+    </div>
+  </div>
+</div>
+
+<!-- Таблица «Детализация по дням» -->
+<h2 class="text-xl font-bold mt-10 mb-4">Детализация по дням</h2>
+
+<div class="overflow-x-auto">
+  <table class="min-w-full text-sm">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2 text-left">День</th>
+        <th class="px-4 py-2 text-right">Расходы</th>
+        <th class="px-4 py-2 text-right">Доход</th>
+        <th class="px-4 py-2 text-right">Прибыль</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in day_rows %}
+      <tr class="border-t hover:bg-gray-50">
+        <td class="px-4 py-2">{{ '%02d' % row.day }}</td>
+        <td class="px-4 py-2 text-right">{{ '%.2f'|format(row.expenses) }}</td>
+        <td class="px-4 py-2 text-right">{{ '%.2f'|format(row.revenue) }}</td>
+        <td class="px-4 py-2 text-right {{ '-text-red-600' if row.profit < 0 else 'text-green-600' }}">
+          {{ '%.2f'|format(row.profit) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
